@@ -42,17 +42,17 @@ def management():
 def manifest():
 
     manifest = {
-        "label": "Alerta",
-        "release": __version__,
-        "build": build.BUILD_NUMBER,
-        "date": build.BUILD_DATE,
-        "revision": build.BUILD_VCS_NUMBER,
+        "name": "Alerta",
         "description": "The Guardian's Alerta monitoring system",
-        "built-by": build.BUILT_BY,
-        "built-on": build.HOSTNAME,
+        "version": __version__,
+        "buildNumber": build.BUILD_NUMBER,
+        "buildTime": build.BUILD_DATE,
+        "buildRevision": build.BUILD_VCS_NUMBER,
+        "builtBy": build.BUILT_BY,
+        "buildMachine": build.HOSTNAME,
     }
 
-    return  jsonify(alerta=manifest)
+    return jsonify(manifest)
 
 
 @app.route('/management/properties', methods=['OPTIONS', 'GET'])
