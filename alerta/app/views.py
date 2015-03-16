@@ -682,7 +682,7 @@ def create_key():
 
     type = request.json.get("type", "read-only")
     if type not in ['read-only', 'read-write']:
-        return jsonify(status="error", message="API key must be read-only or read-write"), 400
+        return jsonify(status="error", message="API key must be 'read-only', 'read-write' or 'full-control'"), 400
 
     text = request.json.get("text", "API Key for %s" % user)
     try:

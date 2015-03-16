@@ -21,12 +21,14 @@ class AuthError(Exception):
     pass
 
 
-def verify_api_key(key, method):
+def verify_api_key(key, method, path='/'):
     perm = db.is_key_valid(key)
     if not perm:
-        raise AuthError('API key is invalid')
+        raise AuthError("API key '%s' is invalid" % key)
     if method in ['POST', 'DELETE'] and perm != 'read-write':
-        raise AuthError('%s requires read-write API key' % method)
+        raise AuthError("%s method requires 'read-write' API key" % method)
+    if path in ['/keys'] and perm != 'full-control':
+        raise AuthError("Path %s requires 'full-control' API key" % path)
     db.update_key(key)
 
 
@@ -63,7 +65,7 @@ def auth_required(f):
         if 'api-key' in request.args:
             key = request.args['api-key']
             try:
-                verify_api_key(key, request.method)
+                verify_api_key(key, request.method, request.path)
             except AuthError as e:
                 return authenticate(str(e))
             return f(*args, **kwargs)
@@ -75,7 +77,7 @@ def auth_required(f):
         if auth_header.startswith('Key'):
             key = auth_header.replace('Key ', '')
             try:
-                verify_api_key(key, request.method)
+                verify_api_key(key, request.method, request.path)
             except AuthError as e:
                 return authenticate(str(e))
             return f(*args, **kwargs)
